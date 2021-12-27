@@ -1,0 +1,258 @@
+* {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/** multi-purpose **/
+.modal {
+    background-color: rgba(0,0,0,0.4);
+    position: fixed; 
+    top: 0; 
+    bottom: 0; 
+    left: 0; 
+    right: 0; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal-box {
+    position: relative;
+    overflow: auto;
+}
+
+.round-button {
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: crimson;
+    color: white;
+    width: 20px; 
+    height: 20px;
+    flex: 0 0 auto;
+    margin-left: auto;
+    cursor: pointer;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#title {
+    text-align: center;
+    margin: 30px; 
+}
+
+/* action bar */
+.action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px;
+    flex: 0 1 auto; 
+}
+
+.tag-search {
+    margin-left: 10px;
+}
+
+.tag-search-submit {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+
+/* tasks section */
+.task-container-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-self: flex-start;
+    flex: 1; 
+}
+
+.add-task-square, .task-square {
+    display: flex;
+    background-color: #fafafa;
+    min-width: 300px;
+    width: 38vh;
+    height: 38vh;
+    border-radius: 10px 10px;
+    margin: 20px;
+    flex: 0 1 auto; 
+}
+
+.add-task-square {
+    align-items: center;
+    justify-content: center;
+    background-color: #E2E2E2;
+}
+
+.add-task-square:hover {
+    background-color: #D2D2D2;
+}
+
+.add-task-square:hover .add-task-image {
+    background-color: grey;
+}
+
+.add-task-image {
+    border-radius: 100%;
+    background-color: #b2b2b2;
+    flex: 0 0 auto; 
+    width: 10vh;
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    color: #E2E2E2;
+}
+
+
+.task-square {
+    flex-direction: column;
+}
+
+/* box containing importance label */
+.task-square-header {
+    display: flex;
+    background-color: #BDB9B3;
+    align-items: center;
+    padding: 10px;
+}
+
+.task-label {
+    flex: 1;
+    color: white;
+    font-size: 20px;
+
+}
+
+.importance-high {
+    background-color: #b84f20;
+}
+
+.importance-mid {
+    background-color: #f38729;
+}
+
+/* box containing content of task */
+.task-body {
+    flex: 1;
+    display: flex;
+    padding: 15px;
+}
+
+.task-title {
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.task-date {
+    margin-left: auto;
+}
+
+/* box containing tags */ 
+.task-tagbox {
+    background-color: #F2F2F2;
+    padding: 10px; 
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.tag-content {
+    background-color: #e2e2e2;
+    border-radius: 50px 50px;
+    padding: 5px 13px;
+    font-size: 12px;
+    margin: 3px;
+}
+
+/* task line styling */ 
+.task-container-line {
+    flex: 1;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    background-color: #F2F2F2;
+}
+
+.task-line {
+    flex: 1;
+    margin: 5px 20px;
+    display: flex;
+    align-items: center;
+}
+
+.task-line-title {
+    text-align: right;
+    font-weight: bold;
+    padding: 10px;
+    flex: 1; 
+    border-right: 1px solid black;
+}
+
+.task-line-date {
+    padding: 10px;
+}
+
+/* add task modal that renders in the middle of the screen */ 
+#add-task-error {
+    color: crimson;
+    margin-bottom: 10px;
+}
+
+#add-task-header {
+    display: flex;
+    height: 20%;
+}
+
+#add-task-box {
+    position: relative;
+    max-width: 50vh;
+    max-height: 80vh;
+    min-width: 50vh;
+    min-height: 50vh;
+    overflow: auto;
+    
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 20px;
+}
+
+#add-task-date {
+    flex: 0;
+    display: flex;
+    width: auto;
+}
+
+#add-task-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#add-task-title {
+    min-height: 16px;
+    max-height: 8vh;
+    flex: 1;
+    margin: 10px 0px;
+}
+
+#add-task-desc {
+    min-height: 30px;
+    max-height: 20vh;
+    flex: 1;
+    margin: 10px 0px;
+}
+
+#add-task-tags {
+    margin: 10px;
+    display: flex;
+    flex-wrap: wrap;
+}
