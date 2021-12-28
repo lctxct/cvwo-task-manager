@@ -1,79 +1,13 @@
 import React from 'react'
 import axios from 'axios'
 import './App.css'
+// Components 
+import Tag from './components/Tag'
+import { TaskBox, AddTaskBox } from './components/TaskBox'
+import TaskLine from './components/TaskLine'
+import ActionBar from './components/ActionBar'
 
 const baseUrl = "http://localhost:8080";
-
-const Tag = (props) => {
-  return (
-    <span className="tag-content">
-      {props.tag}
-    </span>
-  )
-}
-
-const RoundButton = (props) => {
-  return (
-    <span className="round-button">{props.label}</span>
-  )
-}
-
-const TaskHeader = (props) => {
-
-  return (
-    <div className="task-square-header">
-      <div className="task-label">{props.label}</div>
-      <RoundButton label="x" />
-    </div>
-  )
-}
-
-const AddTaskBox = ({ onClick }) => {
-  return (
-    <div className="add-task-square" onClick={onClick}>
-      <span className="add-task-image">+</span>
-    </div>
-  )
-}
-
-const TaskBox = (props) => {
-  return (
-    <div className="task-square">
-      <TaskHeader importance={props.importance} label={props.date} />
-      <div className="task-body">
-        <span className="task-title">{props.taskTitle}</span>
-      </div>
-      <div className="task-tagbox">
-        <Tag tag="this is a super long tag to check out how the tag works oooooooo" />
-        <Tag tag="shorty" />
-        <Tag tag="another shorty" />
-      </div>
-    </div>
-  )
-}
-
-const TaskLine = (props) => {
-  return (
-    <div className="task-line">
-      <span className="task-line-title">{props.taskTitle}</span>
-      <span className="task-line-date">{props.date}</span>
-    </div>
-  )
-}
-
-const ActionBar = (props) => {
-  return (
-    <div className="action-bar">
-
-      <input className="tag-search" name="search" type="text" value={props.value} onChange={props.onChange} onFocus={props.onFocus} onBlur={props.onBlur}></input>
-      <input className="tag-search-submit" type="button" value="x"></input>
-
-      <input type="button" value="A"></input>
-      <input type="button" value="B"></input>
-      <input type="button" value="C" onClick={props.hangeLayout}></input>
-    </div>
-  )
-}
 
 class App extends React.Component {
   constructor(props) {
@@ -95,6 +29,8 @@ class App extends React.Component {
       error: false,
       errorMessage: ''
     }
+
+
   }
 
   componentDidMount() {
@@ -165,8 +101,6 @@ class App extends React.Component {
       })
       return 
     }
-
-    
 
     this.setState({
       addtask: false,
