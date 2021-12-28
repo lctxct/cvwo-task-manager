@@ -18,8 +18,14 @@ class App extends React.Component {
       addtask: false,
 
       tasks: [
-        {id: 1, date: '12', title: 'open sesame'}, 
-        {id: 2, date: '13', title: 'but you have to remember to close the sesame'}
+        {id: 1, date: '12/11', title: 'open sesame'}, 
+        {id: 2, date: '13/11', title: 'but you have to remember to close the sesame'}
+      ],
+      tags: [
+        {id: 1, content: "hello"},
+        {id: 1, content: "hello again!"}, 
+        {id: 1, content: "it's me, open sesame"}, 
+        {id: 1, content: "i enjoy sharing all of my problems with the world"}    
       ],
 
       search: '',
@@ -28,7 +34,8 @@ class App extends React.Component {
       title: 'title...',
       description: 'description...',
       tag: 'tag...',
-      tags: [],
+      temptags: [],
+      
 
       error: false,
       errorMessage: ''
@@ -72,7 +79,6 @@ class App extends React.Component {
   }
 
   handleInputChange = (event) => {
-    console.log("search: " + this.state.search);
     const target = event.target;
     const value = target.value;
     const name = target.name;
@@ -129,7 +135,7 @@ class App extends React.Component {
     event.preventDefault();
     if (this.state.tag !== '') {
       this.setState({
-        tags: this.state.tags.concat(this.state.tag),
+        temptags: this.state.tags.concat(this.state.tag),
         tag: ''
       });
     }
@@ -154,12 +160,13 @@ class App extends React.Component {
 
           <div className="task-container-box">
             <AddTaskBox onClick={() => this.setState({ addtask: true })} />
-            <TaskBox taskTitle="this is a super duper long task title meant to test out if the flex stuff works" date="12/04/2021" />
             {
               this.state.tasks
               .filter(task => task.title.includes(this.state.search))
               .map(task =>
-                <TaskBox id={task.id} date={task.date} taskTitle={task.title} />
+                <TaskBox key={task.id} id={task.id} date={task.date} taskTitle={task.title} tags={
+                  this.state.tags.filter(tag => tag.id === task.id)
+                }/>
               )
             }
           </div>
@@ -178,7 +185,7 @@ class App extends React.Component {
                 <span>Add tags: </span>
                 <input name="tag" type="text" value={this.state.tag} onChange={this.handleInputChange} onFocus={this.handleFocus} onBlur={this.handleBlur} />
                 <div id="add-task-tags">
-                  {this.state.tags.map(tag =>
+                  {this.state.temptags.map(tag =>
                     <Tag key={tag} tag={tag} />
                   )}
                 </div>

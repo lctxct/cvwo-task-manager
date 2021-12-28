@@ -18,9 +18,9 @@ export const TaskBox = (props) => {
         <span className="task-title">{props.taskTitle}</span>
       </div>
       <div className="task-tagbox">
-        <Tag tag="this is a super long tag to check out how the tag works oooooooo" />
-        <Tag tag="shorty" />
-        <Tag tag="another shorty" />
+        {props.tags ? props.tags.map(tag => 
+          <Tag key={tag.content} tag={tag.content} />  
+        ) : null }
       </div>
     </div>
   )
