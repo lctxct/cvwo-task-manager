@@ -1,13 +1,16 @@
 import React from 'react'
 import axios from 'axios'
 import './App.css'
+
 // Components 
-import Tag from './components/Tag'
 import { TaskBox, AddTaskBox } from './components/TaskBox'
 import TaskLine from './components/TaskLine'
 import ActionBar from './components/ActionBar'
+import AddTaskModal from './components/AddTaskModal'
 
 const baseUrl = "http://localhost:8080";
+
+
 
 class App extends React.Component {
   constructor(props) {
@@ -29,24 +32,11 @@ class App extends React.Component {
       ],
 
       search: '',
-
-      date: 'date...',
-      title: 'title...',
-      description: 'description...',
-      tag: 'tag...',
-      temptags: [],
-      
-
-      error: false,
-      errorMessage: ''
     }
 
     this.changeLayout = this.changeLayout.bind(this);
     this.changeAddtask = this.changeAddtask.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleFocus = this.handleFocus.bind(this); 
-    this.handleBlur = this.handleBlur.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -71,10 +61,7 @@ class App extends React.Component {
     if (this.state.addtask) {
       this.setState({ addtask: false });
     } else {
-      this.setState({
-        addtask: true,
-        tags: []
-      });
+      this.setState({ addtask: true });
     }
   }
 
@@ -86,59 +73,6 @@ class App extends React.Component {
     this.setState({
       [name]: value
     })
-  }
-
-  handleFocus = (event) => {
-    const name = event.target.name;
-
-    if (this.state[name] === name + "...") {
-      this.setState({
-        [name]: ""
-      })
-    }
-  }
-
-  handleBlur = (event) => {
-    const name = event.target.name;
-
-    if (this.state[name] === "") {
-      this.setState({
-        [name]: name + "..."
-      })
-    }
-  }
-
-  handleSubmit = (event) => {
-    event.preventDefault();
-    if (this.state.title === 'title...' || this.state.title === "") {
-      this.setState({
-        error: true, 
-        errorMessage: "title not filled"
-      })
-      return 
-    }
-
-    this.setState({
-      addtask: false,
-      date: 'date...',
-      title: 'title...',
-      description: 'description...',
-      tag: 'tag...',
-      tags: [],
-      error: false,
-      errorMessage: ''
-
-    })
-  }
-
-  handleSubmitTag = (event) => {
-    event.preventDefault();
-    if (this.state.tag !== '') {
-      this.setState({
-        temptags: this.state.tags.concat(this.state.tag),
-        tag: ''
-      });
-    }
   }
 
   render() {
@@ -173,31 +107,7 @@ class App extends React.Component {
         }
 
         <div id="add-task-modal" className="modal" style={this.state.addtask ? {} : { display: "none" }}>
-          <div id="add-task-box" className="modal-box">
-            <div id="add-task-header">
-              <input id="add-task-date" name="date" value={this.state.date} onChange={this.handleInputChange} onFocus={this.handleFocus} onBlur={this.handleBlur} />
-              <span className="round-button" onClick={this.changeAddtask}>x</span>
-            </div>
-            <div id="add-task-content">
-              <input id="add-task-title" name="title" value={this.state.title} onChange={this.handleInputChange} onFocus={this.handleFocus} onBlur={this.handleBlur} />
-              <input id="add-task-desc" name="description" value={this.state.description} onChange={this.handleInputChange} onFocus={this.handleFocus} onBlur={this.handleBlur} />
-              <form onSubmit={this.handleSubmitTag}>
-                <span>Add tags: </span>
-                <input name="tag" type="text" value={this.state.tag} onChange={this.handleInputChange} onFocus={this.handleFocus} onBlur={this.handleBlur} />
-                <div id="add-task-tags">
-                  {this.state.temptags.map(tag =>
-                    <Tag key={tag} tag={tag} />
-                  )}
-                </div>
-              </form>
-            </div>
-            {this.state.error &&
-              <span id="add-task-error">{this.state.errorMessage}</span>
-            }
-            <div id="add-task-footer">
-              <input type="button" value="Add Task" onClick={this.handleSubmit} />
-            </div>
-          </div>
+          <AddTaskModal changeAddtask={this.changeAddtask} />
         </div>
       </div>
     )
