@@ -158,17 +158,15 @@ class App extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const items = ['date', 'title', 'description'];
-    for (const item of items) {
-      if (this.state[item] === item + '...' || this.state[item] === "") {
-        console.log(item + " not filled");
-        this.setState({
-          error: true,
-          errorMessage: [item] + " not filled"
-        })
-        return null;
-      }
+    if (this.state.title === 'title...' || this.state.title === "") {
+      this.setState({
+        error: true, 
+        errorMessage: "title not filled"
+      })
+      return 
     }
+
+    
 
     this.setState({
       addtask: false,
