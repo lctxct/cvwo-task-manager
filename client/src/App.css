@@ -56,12 +56,7 @@
 }
 
 .tag-search {
-    margin-left: 10px;
-}
-
-.tag-search-submit {
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
+    margin: 0px 10px;
 }
 
 

@@ -17,15 +17,19 @@ class App extends React.Component {
       box: true,
       addtask: false,
 
-      tasks: [],
+      tasks: [
+        {id: 1, date: '12', title: 'open sesame'}, 
+        {id: 2, date: '13', title: 'but you have to remember to close the sesame'}
+      ],
 
-      search: 'search...',
+      search: '',
 
       date: 'date...',
       title: 'title...',
       description: 'description...',
       tag: 'tag...',
       tags: [],
+
       error: false,
       errorMessage: ''
     }
@@ -63,6 +67,7 @@ class App extends React.Component {
   }
 
   handleInputChange = (event) => {
+    console.log("search: " + this.state.search);
     const target = event.target;
     const value = target.value;
     const name = target.name;
@@ -146,7 +151,9 @@ class App extends React.Component {
             <AddTaskBox onClick={() => this.setState({ addtask: true })} />
             <TaskBox taskTitle="this is a super duper long task title meant to test out if the flex stuff works" date="12/04/2021" />
             {
-              this.state.tasks.map(task =>
+              this.state.tasks
+              .filter(task => task.title.includes(this.state.search))
+              .map(task =>
                 <TaskBox id={task.id} date={task.date} taskTitle={task.title} />
               )
             }
