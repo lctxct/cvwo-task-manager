@@ -34,7 +34,12 @@ class App extends React.Component {
       errorMessage: ''
     }
 
-
+    this.changeLayout = this.changeLayout.bind(this);
+    this.changeAddtask = this.changeAddtask.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleFocus = this.handleFocus.bind(this); 
+    this.handleBlur = this.handleBlur.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
