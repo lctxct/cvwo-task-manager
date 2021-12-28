@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import './styles/App.css'
+import './App.css'
 
 const baseUrl = "http://localhost:8080";
 
