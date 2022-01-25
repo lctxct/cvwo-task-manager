@@ -50,7 +50,7 @@ class App extends React.Component {
       .get(baseUrl + '/tasks')
       .then(res => {
         this.setState({
-          tasks: res.data
+          tasks: res.data ? res.data : [],
         })
       })
 
@@ -58,7 +58,7 @@ class App extends React.Component {
     .get(baseUrl + '/tags')
     .then(res => {
       this.setState({
-        alltags: res.data, 
+        alltags: res.data ? res.data : [], 
       })
     })
   }

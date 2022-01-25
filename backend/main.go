@@ -51,7 +51,6 @@ func main() {
 		Passwd:               os.Getenv("DBPASS"),
 		Net:                  "tcp",
 		Addr:                 os.Getenv("DBADDR"),
-		DBName:               "taskManager",
 		AllowNativePasswords: true,
 	}
 	// Get a database handle
@@ -60,11 +59,27 @@ func main() {
 		log.Fatal(err)
 	}
 
+	_, err = db.Exec("CREATE DATABASE IF NOT EXISTS taskManager")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec("USE taskManager")
+	if err != nil {
+		log.Fatal()
+	}
+
 	pingErr := db.Ping()
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
 	fmt.Println("Connected to DB!")
+
+	err = createTables()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Tables created!")
 
 	// gin routers
 	router := gin.New()
@@ -85,6 +100,25 @@ func main() {
 	router.DELETE("/remove/:id1/:id2", deleteTaskTag)
 
 	router.Run("localhost:8080")
+}
+
+func createTables() error {
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS tasks (id INT AUTO_INCREMENT NOT NULL, date VARCHAR(128) NOT NULL,title VARCHAR(255) NOT NULL,description VARCHAR(500) NOT NULL,PRIMARY KEY (`id`))")
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS tags (id INT AUTO_INCREMENT NOT NULL, content VARCHAR(255) NOT NULL, PRIMARY KEY (`id`))")
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS taskTag (task_id INT NOT NULL, tag_id INT NOT NULL, FOREIGN KEY (`task_id`) REFERENCES tasks(id), FOREIGN KEY (`tag_id`) REFERENCES tags(id))")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 /** RETRIEVING DATA **/
