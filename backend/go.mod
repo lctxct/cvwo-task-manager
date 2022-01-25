@@ -1,4 +1,4 @@
-module lctcvwo/backend
+module cvwo/app
 
 go 1.17
 

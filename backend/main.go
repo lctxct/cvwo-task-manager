@@ -29,6 +29,11 @@ type Task struct {
 	Tags        []Tag  `json:"tags"`
 }
 
+type TaskTag struct {
+	Task_ID int64 `json:"task_id"`
+	Tag_ID  int64 `json:"tag_id"`
+}
+
 func (task *Task) AddTag(tag Tag) []Tag {
 	task.Tags = append(task.Tags, tag)
 	return task.Tags
@@ -66,19 +71,20 @@ func main() {
 	router.Use(CORSMiddleware())
 
 	router.GET("/tasks", getTasks)
-	router.GET("/all/:id", getTaskByID)
-	router.POST("/task", postTask)
-	router.DELETE("/task/:id", deleteTask)
-	//router.POST("/task/:id", updateTask) // id preserved
+	router.GET("/task/:id", getTaskByID)
+	router.GET("/tags", getTags)
+	router.GET("/tags/:id", getTagsByTaskID)
 
+	router.POST("/task", postTask)
+	//router.POST("/task/:id", updateTask) // id preserved
 	router.POST("/tag", postTag)
-	// router.GET("/tag/:id", getTagsByID)
-	// // check if there's a way to delete multiple tags in one go
-	// router.DELETE("/tag/:id", deleteTag)
+	router.POST("/update/task/:id", postModifyTask)
+	router.POST("/tasktag", postTaskTag)
+
+	router.DELETE("/task/:id", deleteTask)
+	router.DELETE("/remove/:id1/:id2", deleteTaskTag)
 
 	router.Run("localhost:8080")
-
-	//handleRequests()
 }
 
 /** RETRIEVING DATA **/
@@ -109,6 +115,28 @@ func taskById(id int64) (Task, error) {
 		return t, fmt.Errorf("taskById: %v", err)
 	}
 	return t, nil
+}
+
+func tagsByTaskID(id int64) ([]Tag, error) {
+	var tags []Tag
+
+	rows, err := db.Query("SELECT tags.id, tags.content FROM tags INNER JOIN taskTag WHERE taskTag.task_id != ?", id)
+	if err != nil {
+		return nil, fmt.Errorf("tagsByTaskID: %v", err)
+	}
+
+	for rows.Next() {
+		var t Tag
+		if err := rows.Scan(&t.ID, &t.Content); err != nil {
+			return nil, fmt.Errorf("tagsByTaskID: %v", err)
+		}
+		tags = append(tags, t)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("tagsByTaskID: %v", err)
+	}
+
+	return tags, nil
 }
 
 // Querying for all tasks
@@ -150,6 +178,28 @@ func allTasks() ([]Task, error) {
 	return tasks, nil
 }
 
+func allTags() ([]Tag, error) {
+	var tags []Tag
+
+	rows, err := db.Query("SELECT * FROM tags")
+	if err != nil {
+		return nil, fmt.Errorf("allTags: %v", err)
+	}
+
+	for rows.Next() {
+		var t Tag
+		if err := rows.Scan(&t.ID, &t.Content); err != nil {
+			return nil, fmt.Errorf("allTags: %v", err)
+		}
+		tags = append(tags, t)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("allTags: %v", err)
+	}
+
+	return tags, nil
+}
+
 /** ADDING DATA **/
 func addTask(t Task) (int64, error) {
 	result, err := db.Exec("INSERT INTO tasks (date, title, description) VALUES (?, ?, ?)", t.Date, t.Title, t.Description)
@@ -182,6 +232,23 @@ func addTag(t Tag, task_id int64) (int64, error) {
 	return tag_id, nil
 }
 
+func addTaskTag(t TaskTag) error {
+	_, err := db.Exec("INSERT INTO taskTag (task_id, tag_id) VALUES (?, ?)", t.Task_ID, t.Tag_ID)
+	if err != nil {
+		return fmt.Errorf("addTaskTag: %v", err)
+	}
+	return nil
+}
+
+/** CHANGING DATA **/
+func modifyTask(t Task) (int64, error) {
+	_, err := db.Exec("UPDATE tasks SET date = ?, title = ?, description = ? WHERE id = ?", t.Date, t.Title, t.Description, t.ID)
+	if err != nil {
+		return 0, fmt.Errorf("modifyTask: %v", err)
+	}
+	return t.ID, nil
+}
+
 /** REMOVING DATA **/
 func removeTask(id int64) error {
 	_, err := db.Exec("DELETE FROM taskTag WHERE task_id = ?", id)
@@ -192,6 +259,15 @@ func removeTask(id int64) error {
 	_, err = db.Exec("DELETE FROM tasks WHERE id = ?", id)
 	if err != nil {
 		return fmt.Errorf("removeTask: %v", err)
+	}
+
+	return nil
+}
+
+func removeTaskTag(id1 int64, id2 int64) error {
+	_, err := db.Exec("DELETE FROM taskTag WHERE task_id = ? && tag_id = ?", id1, id2)
+	if err != nil {
+		return fmt.Errorf("removeTaskTag: %v", err)
 	}
 
 	return nil
@@ -222,6 +298,31 @@ func getTaskByID(c *gin.Context) {
 		return
 	}
 	c.IndentedJSON(http.StatusOK, task)
+}
+
+func getTags(c *gin.Context) {
+	tags, err := allTags()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c.IndentedJSON(http.StatusOK, tags)
+}
+
+func getTagsByTaskID(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	tags, err := tagsByTaskID(id)
+	if err != nil {
+		log.Fatal(err)
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "tags not found"})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, tags)
 }
 
 // [POST]
@@ -257,6 +358,34 @@ func postTag(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, t)
 }
 
+func postTaskTag(c *gin.Context) {
+	var t TaskTag
+
+	if err := c.BindJSON(&t); err != nil {
+		return
+	}
+
+	err := addTaskTag(t)
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.IndentedJSON(http.StatusCreated, t)
+}
+
+func postModifyTask(c *gin.Context) {
+	var t Task
+
+	if err := c.BindJSON(&t); err != nil {
+		return
+	}
+
+	_, err := modifyTask(t)
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.IndentedJSON(http.StatusCreated, t)
+}
+
 // [PUTS]
 
 // [DELETE]
@@ -268,6 +397,25 @@ func deleteTask(c *gin.Context) {
 	}
 
 	err = removeTask(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func deleteTaskTag(c *gin.Context) {
+	id1, err := strconv.ParseInt(c.Param("id1"), 10, 64)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	id2, err := strconv.ParseInt(c.Param("id2"), 10, 64)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	err = removeTaskTag(id1, id2)
 	if err != nil {
 		log.Fatal(err)
 	}

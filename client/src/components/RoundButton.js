@@ -2,7 +2,7 @@ import '../App.css'
 
 const RoundButton = (props) => {
   return (
-    <span className="round-button">{props.label}</span>
+    <span className="round-button" onClick={props.onClick} style={props.style}>{props.label}</span>
   )
 }
 

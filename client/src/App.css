@@ -34,6 +34,7 @@
     flex: 0 0 auto;
     margin-left: auto;
     cursor: pointer;
+    margin-right: 6px; 
 }
 
 .main-container {
@@ -123,7 +124,6 @@
     flex: 1;
     color: white;
     font-size: 20px;
-
 }
 
 .importance-high {
@@ -138,12 +138,17 @@
 .task-body {
     flex: 1;
     display: flex;
+    flex-direction: column;
     padding: 15px;
 }
 
 .task-title {
     margin-right: 5px;
     font-weight: bold;
+}
+
+.task-description {
+    margin-top: 10px; 
 }
 
 .task-date {
@@ -250,4 +255,34 @@
     margin: 10px;
     display: flex;
     flex-wrap: wrap;
+}
+
+/** Modify task modal **/ 
+.modify-task-button {
+    margin: 5px;
+}
+
+#modify-task-tags {
+    margin: 10px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    width: 150px;
+}
+
+.tag-menu {
+    position: absolute;
+    z-index: 1; 
+    width: 140px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tag-dropdown-content {
+    display: block;
+    width: auto;
 }

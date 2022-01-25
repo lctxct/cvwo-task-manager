@@ -1,6 +1,10 @@
 import React from 'react'
+import axios from 'axios'
 import '../App.css'
 import Tag from './Tag'
+import { TaskBox } from './TaskBox';
+
+const baseUrl = "http://localhost:8080";
 
 class AddTaskModal extends React.Component {
     constructor(props) {
@@ -54,7 +58,7 @@ class AddTaskModal extends React.Component {
       })
     }
   
-    handleSubmit = (event) => {
+    handleSubmit = async(event) => {
       event.preventDefault();
       if (this.state.title === 'title...' || this.state.title === "") {
         this.setState({
@@ -63,6 +67,28 @@ class AddTaskModal extends React.Component {
         })
         return 
       }
+
+      let newTask = {
+        date: this.state.date === 'date...' ? "" : this.state.date, 
+        title: this.state.title === 'title...' ? "" : this.state.title,
+        description: this.state.description === 'description...' ? "" : this.state.description,
+      }
+      
+      await axios
+      .post(baseUrl + "/task", newTask)
+      .then(res => {
+          let id = res.data.id; 
+          console.log(this.state.temptags.length); 
+          for (let i = 0; i < this.state.temptags.length; i++) {
+            axios
+            .post(baseUrl + "/tag", {id: id, content: this.state.temptags[i].content})
+          }
+
+          newTask.id = id; 
+          newTask.tags = this.state.temptags; 
+          this.props.renderNewTask(newTask); 
+      });
+      
   
       this.setState({
         date: 'date...',
@@ -82,7 +108,7 @@ class AddTaskModal extends React.Component {
       event.preventDefault();
       if (this.state.tag !== '') {
         this.setState({
-          temptags: this.state.temptags.concat(this.state.tag),
+          temptags: this.state.temptags.concat({id: this.state.temptags.length+1, content: this.state.tag}),
           tag: ''
         });
       }
@@ -103,7 +129,7 @@ class AddTaskModal extends React.Component {
                   <input name="tag" type="text" value={this.state.tag} onChange={this.handleInputChange} onFocus={this.handleFocus} onBlur={this.handleBlur} />
                   <div id="add-task-tags">
                     {this.state.temptags ? this.state.temptags.map(tag =>
-                      <Tag key={tag} tag={tag} />
+                      <Tag key={tag.id} tag={tag.content} />
                     ) : null }
                   </div>
                 </form>
