@@ -63,10 +63,20 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	db.Close()
 
-	_, err = db.Exec("USE taskManager")
+	cfg = mysql.Config{
+		User:                 os.Getenv("DBUSER"),
+		Passwd:               os.Getenv("DBPASS"),
+		Net:                  "tcp",
+		Addr:                 os.Getenv("DBADDR"),
+		DBName:               "taskManager",
+		AllowNativePasswords: true,
+	}
+
+	db, err = sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
-		log.Fatal()
+		log.Fatal(err)
 	}
 
 	pingErr := db.Ping()
